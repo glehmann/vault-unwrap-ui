@@ -8,18 +8,33 @@
             {{error}}
           </v-alert>
           <v-col cols="12" sm="8" v-if="error === ''">
-            <v-text-field v-for="item in secrets" :key="item.key"
-              append-icon="mdi-content-copy"
-              :prepend-inner-icon="show[item.key] ? 'mdi-eye' : 'mdi-eye-off'"
-              :type="show[item.key] ? 'text' : 'password'"
+            <v-toolbar flat>
+              <v-toolbar-title>Secret</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-switch label="JSON" v-model="json" v-on="on"/>
+                </template>
+                <span>Source</span>
+              </v-tooltip>
+            </v-toolbar>
+            <v-card outlined v-if="json">
+              <pre>{{raw_data}}</pre>
+            </v-card>
+            <v-card-text v-if="!json">
+              <v-text-field v-for="item in secrets" :key="item.key"
+                append-icon="mdi-content-copy"
+                :prepend-inner-icon="show[item.key] ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="show[item.key] ? 'text' : 'password'"
                 :label="item.key"
-              :value="item.value"
-              class="input-group--focused"
-              @click:prepend-inner='show[item.key] = !show[item.key]'
-              @click:append='toClipboard(item.value)'
-              readonly
-              outlined
-            />
+                :value="item.value"
+                class="input-group--focused"
+                @click:prepend-inner='show[item.key] = !show[item.key]'
+                @click:append='toClipboard(item.value)'
+                readonly
+                outlined
+              />
+            </v-card-text>
           </v-col>
           <v-alert type="info" v-if="error === ''" class="elevation-12">
             This secret is only accessible once. It won't be possible to open this
@@ -43,6 +58,8 @@
       secrets: [],
       show: {},
       error: '',
+      json: false,
+      raw_data: {},
     }
   },
   methods: {
@@ -74,6 +91,7 @@
             secrets.push({'key': key, 'value': data[key]});
             show[key] = false;
           }
+          this.raw_data = data;
           this.secrets = secrets;
           this.show = show;
         })
