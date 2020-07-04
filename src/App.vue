@@ -7,10 +7,6 @@
           <v-alert type="error" v-if="error !== ''">
             {{error}}
           </v-alert>
-          <v-alert type="info" v-if="error === ''" class="elevation-12">
-            This secret is only accessible once. It won't be possible to open this
-            link again in the future.
-          </v-alert>
           <v-col cols="12" sm="8" v-if="error === ''">
             <v-text-field v-for="item in secrets" :key="item.key"
               append-icon="mdi-content-copy"
@@ -25,6 +21,10 @@
               outlined
             />
           </v-col>
+          <v-alert type="info" v-if="error === ''" class="elevation-12">
+            This secret is only accessible once. It won't be possible to open this
+            link again in the future.
+          </v-alert>
 
         </v-row>
       </v-container>
