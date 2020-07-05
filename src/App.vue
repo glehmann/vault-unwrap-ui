@@ -30,7 +30,7 @@
                 :value="item.value"
                 class="input-group--focused"
                 @click:prepend-inner='show[item.key] = !show[item.key]'
-                @click:append='toClipboard(item.value)'
+                @click:append='toClipboard(item.key)'
                 readonly
                 outlined
               />
@@ -43,6 +43,9 @@
 
         </v-row>
       </v-container>
+      <v-snackbar v-model="snackbar" timeout=1500>
+        {{ message }}
+      </v-snackbar>
     </v-main>
   </v-app>
 </template>
@@ -60,13 +63,16 @@
       error: '',
       json: false,
       raw_data: {},
+      message: '',
+      snackbar: false,
     }
   },
   methods: {
-    toClipboard: function (text) {
-      navigator.clipboard.writeText(text)
+    toClipboard: function (key) {
+      navigator.clipboard.writeText(this.raw_data[key])
         .then(() => {
-          // FIXME: show a message saying the secret has been copied
+          this.message = "Secret '" + key + "' copied to clipboard.";
+          this.snackbar = true;
         })
         .catch(err => {
           // This can happen if the user denies clipboard permissions:
